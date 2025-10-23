@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <title>Scope Timeline</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>    
+    <nav class="menu">
+        <a href="index.html" class="menu-item">Home</a>
+        <a href="#calculator-section" class="menu-item" id="calculator-link">Calculator</a>
+    </nav>
+
+    <div class="container">
+        <div class="scope-block">
+            <h1 class="title">SCOPE DATE LIMIT</h1>
+            <p id="resultat" class="scopeDate"></p>
+        </div>
+        
+
+        <div class="calculator" id ="calculator-section">
+            <h2>Custom Scope Calculator</h2>
+            
+            <div class="calculator-form">
+                <label for="start-date">Start date:</label>
+                <input type="date" id="start-date" class="date-input">
+                
+                <label for="current-date">Target date:</label>
+                <input type="date" id="current-date" class="date-input">
+                
+                <button onclick="calculateScope()" class="btn-calculate">
+                    Calcular Scope
+                </button>
+                
+                <div id="calculator-result" class="calculator-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==============================
+        // PART 1: Data límit principal
+        // ==============================
+        const firstDay = new Date(2025, 4, 28);
+        firstDay.setHours(0,0,0,0);
+        const today = new Date(); 
+        today.setHours(0,0,0,0);
+        const timeDiff = today - firstDay;
+        const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        let limitDay = new Date();         
+        limitDay.setHours(0,0,0,0);
+        limitDay.setDate(limitDay.getDate() + daysDiff);
+        const lastDay = limitDay.toLocaleDateString('en', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        document.getElementById('resultat').textContent = lastDay;
+
+        // ==============================
+        // PART 2: Calculadora de Scope
+        // ==============================
+        // Data actual per defecte al datepicker
+        const todayStr = today.toISOString().split('T')[0];
+        document.getElementById('current-date').value = todayStr;
+
+        function calculateScope() {
+            const startDateInput = document.getElementById('start-date').value;
+            const currentDateInput = document.getElementById('current-date').value;
+            
+            if (!startDateInput || !currentDateInput) {
+                alert('Si us plau, selecciona totes dues dates.');
+                return;
+            }
+            
+            const startDate = new Date(startDateInput);
+            startDate.setHours(0, 0, 0, 0);
+            
+            const currentDate = new Date(currentDateInput);
+            currentDate.setHours(0, 0, 0, 0);
+            
+            if (startDate > currentDate) {
+                alert('La data d’inici ha de ser anterior a la data actual.');
+                return;
+            }
+            
+            const timeDiff = currentDate - startDate;
+            const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            
+            const limitDate = new Date(currentDate.getTime() + (daysDiff * 24 * 60 * 60 * 1000));
+            
+            const limitFormatted = limitDate.toLocaleDateString('en', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            const resultHTML = `
+                <div class="result-card">
+                <h3>Results</h3>
+                <p><strong>Days elapsed:</strong> ${daysDiff} days</p>
+                <p><strong>Scope deadline:</strong> ${limitFormatted}</p>
+                <p class="result-explanation">
+                    From the start date until today, ${daysDiff} days have passed.
+                    Your Scope extends ${daysDiff} more days into the future from today.
+                </p>
+                </div>
+            `;
+            
+            document.getElementById('calculator-result').innerHTML = resultHTML;
+        }
+        // ==============================
+        // PART 3: Scroll suau
+        // ==============================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
