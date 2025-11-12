@@ -13,10 +13,38 @@
 
     <div class="container">
         <div class="scope-block">
-            <h1 class="title">SCOPE DATE LIMIT</h1>
+            <p class="title">SCOPE DATE LIMIT</p>
+            <p class="subtitle">Based on the first day: May 28, 2025</p>
             <p id="resultat" class="scopeDate"></p>
+
         </div>
-        
+                
+        <div class="upcoming-events">
+            <h2 class="events-title">Upcoming Events</h2>
+            <div class="events-container">
+                <div class="event-widget">
+                    <div class="event-day-name">THURSDAY</div>
+                    <div class="event-day-number">28</div>
+                    <div class="event-month">NOV</div>
+                    <div class="event-description">Six Month Anniversary</div>
+                </div>
+                
+                <div class="event-widget">
+                    <div class="event-day-name">WEDNESDAY</div>
+                    <div class="event-day-number">25</div>
+                    <div class="event-month">DEC</div>
+                    <div class="event-description">Christmas 🎄</div>
+                </div>
+                
+                <div class="event-widget">
+                    <div class="event-day-name">MONDAY</div>
+                    <div class="event-day-number">2</div>
+                    <div class="event-month">FEB</div>
+                    <div class="event-description">Dani's 22nd Birthday 🎂</div>
+                </div>
+            </div>
+        </div>
+                
 
         <div class="calculator" id ="calculator-section">
             <h2>Custom Scope Calculator</h2>
@@ -43,33 +71,44 @@
         // ==============================
         const firstDay = new Date(2025, 4, 28);
         firstDay.setHours(0,0,0,0);
+
+        // Javascript a través del rellotge intern del SO obté la data actual i hora
         const today = new Date(); 
         today.setHours(0,0,0,0);
+
         const timeDiff = today - firstDay;
         const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-        let limitDay = new Date();         
-        limitDay.setHours(0,0,0,0);
-        limitDay.setDate(limitDay.getDate() + daysDiff);
-        const lastDay = limitDay.toLocaleDateString('en', {
+
+        const limitDay = new Date(today.getTime() + (daysDiff * 24 * 60 * 60 * 1000));         
+        const lastDay = limitDay.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
         });
         document.getElementById('resultat').textContent = lastDay;
+        // ==============================
+        // Scope meaning
+        // ============================== 
+
 
         // ==============================
         // PART 2: Calculadora de Scope
         // ==============================
         // Data actual per defecte al datepicker
-        const todayStr = today.toISOString().split('T')[0];
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+
         document.getElementById('current-date').value = todayStr;
+        document.getElementById('start-date').value = '2025-05-28';
 
         function calculateScope() {
             const startDateInput = document.getElementById('start-date').value;
             const currentDateInput = document.getElementById('current-date').value;
             
             if (!startDateInput || !currentDateInput) {
-                alert('Si us plau, selecciona totes dues dates.');
+                alert('Please, select both dates.');
                 return;
             }
             
@@ -80,7 +119,7 @@
             currentDate.setHours(0, 0, 0, 0);
             
             if (startDate > currentDate) {
-                alert('La data d’inici ha de ser anterior a la data actual.');
+                alert('The start date must be earlier than the current date.');
                 return;
             }
             
